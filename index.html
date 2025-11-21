@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>SIP Round-2 — Class 2 (300 MCQ)</title>
+<title>SIP Round-2 — Class 2 (300 Questions, input answers)</title>
 <style>
   :root{
     --accent:#0b63d5;
@@ -56,16 +56,12 @@
   }
   .qnum{font-weight:700;color:var(--muted); font-size:13px; display:inline-block; width:30px;}
   .qtext{font-size:16px; display:inline-block; vertical-align:middle; margin-left:6px;}
-  .choices{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;}
-  .choice{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:6px 8px; border-radius:8px; border:1px solid #e6eefc; background:#fbfdff;
-    cursor:pointer; user-select:none; font-size:15px;
+  .ansBox{
+    width:110px; padding:6px; font-size:15px; border-radius:6px; border:1px solid #ccc;
   }
-  .choice input{transform:scale(1.02);}
   .correctMark{color:green;font-weight:700;margin-left:8px;}
   .wrongMark{color:#b30000;font-weight:700;margin-left:8px;}
-  #resultsPanel{margin-top:16px; padding:12px; background:white; border-left:5px solid var(--accent); border-radius:8px; display:none;}
+  #resultsPanel{margin-top:16px; padding:12px; background:white; border-left:5px solid var(--accent); border-radius:8px; display:none; max-height:50vh; overflow:auto;}
   .solutions{margin-top:12px;}
   .sol{padding:8px;border-radius:6px;margin-bottom:6px;}
   .sol.correct{background:var(--good);}
@@ -80,10 +76,9 @@
 <body>
 
 <header>
-  <!-- Local uploaded image path included here -->
-  <img src="data:image/jpeg;base64,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" alt="logo">
+  <img src="" alt="logo" id="logoPlaceholder">
   <div>
-    <h1>SIP Round-2 — Class 2 (300 MCQ)</h1>
+    <h1>SIP Round-2 — Class 2 (300 Questions)</h1>
     <div style="font-size:13px;color:var(--muted)">Mixed arithmetic (Addition, Subtraction, Multiplication, Division)</div>
   </div>
   <div style="margin-left:auto;display:flex;align-items:center;">
@@ -115,28 +110,21 @@
 </footer>
 
 <script>
-/*
-  300 MCQ generator (Range R3: 1..100)
-  - Operations: +, -, ×, ÷ (division yields integer)
-  - MCQ: 4 options (1 correct + 3 distractors)
-  - Two columns layout
-  - Auto score, show solutions
+/* Working 300-question input-answer generator
+   - TOTAL questions
+   - Range 1..100 (R3)
+   - Operators: + - × ÷ (division returns integer quotient)
 */
 
 const TOTAL = 300;
 const RANGE_MIN = 1;
 const RANGE_MAX = 100;
-
 const OPS = ["+", "-", "×", "÷"];
 
-// Utility helpers
 function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
-function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } return arr; }
-function uniquePush(arr,v){ if(!arr.includes(v)) arr.push(v); }
 
-// Generate one arithmetic Q with integer division when op is ÷
 function genArithmetic(){
-  const op = OPS[randInt(0,OPS.length-1)];
+  const op = OPS[randInt(0, OPS.length-1)];
   let a,b,answer;
   if(op === "+"){
     a = randInt(RANGE_MIN, RANGE_MAX);
@@ -147,172 +135,134 @@ function genArithmetic(){
     b = randInt(RANGE_MIN, a); // ensure non-negative
     answer = a - b;
   } else if(op === "×"){
-    // keep multiplication sensible: choose factors that keep product <= RANGE_MAX maybe up to 100
-    // pick small factor and larger factor but within 1..100
     b = randInt(2,12);
-    a = randInt(2, Math.floor(RANGE_MAX / b));
+    a = randInt(2, Math.max(2, Math.floor(RANGE_MAX / b)));
     answer = a * b;
-  } else { // division
-    b = randInt(2,12); // divisor
-    let mult_max = Math.floor(RANGE_MAX / b);
-    if(mult_max < 1) mult_max = 1;
-    let m = randInt(1, mult_max);
-    answer = m;
+  } else { // division — make dividend multiple of divisor
+    b = randInt(2,12);
+    const maxMult = Math.max(1, Math.floor(RANGE_MAX / b));
+    const m = randInt(1, maxMult);
     a = m * b;
+    answer = m;
   }
-  return {
-    qtext: `${a} ${op} ${b} =`,
-    answer: answer
-  };
+  return { text: `${a} ${op} ${b} =`, correct: answer };
 }
 
-// Create 4 MCQ options (including correct one). Distractors are near the correct answer.
-function makeOptions(correct){
-  const opts = [correct];
-  const spread = Math.max(2, Math.floor(Math.abs(correct)*0.15) || 2);
-  // generate plausible distractors
-  while(opts.length < 4){
-    let delta = randInt(1, Math.max(3, spread));
-    let sign = Math.random() < 0.5 ? -1 : 1;
-    let candidate = correct + sign*delta;
-    if(candidate < 0) candidate = Math.abs(candidate)+1;
-    if(candidate === correct) continue;
-    uniquePush(opts, candidate);
-    if(opts.length >= 4) break;
-  }
-  // If still <4, fill random small numbers
-  while(opts.length < 4){
-    let candidate = randInt(1, Math.min(200, RANGE_MAX+50));
-    uniquePush(opts, candidate);
-  }
-  return shuffle(opts);
-}
-
-// Global storage for current set
 let currentSet = [];
 
-// Build the 300-question set
+// Build question set
 function buildSet(){
   const arr = [];
   for(let i=0;i<TOTAL;i++){
-    // make sure we include a mix; at least roughly uniform
-    const item = genArithmetic();
-    const options = makeOptions(item.answer);
-    arr.push({
-      id: i+1,
-      q: item.qtext,
-      options: options,
-      correct: item.answer
-    });
+    const q = genArithmetic();
+    arr.push({ id: i+1, qtext: q.text, correct: q.correct });
   }
   return arr;
 }
 
-// Render to two columns
+// Efficient render using DocumentFragment for 300 items
 function render(set){
   const left = document.getElementById('colLeft');
   const right = document.getElementById('colRight');
   left.innerHTML = '';
   right.innerHTML = '';
-  // distribute: items 0..149 => left & right alternating to balance question length
+
+  const fragLeft = document.createDocumentFragment();
+  const fragRight = document.createDocumentFragment();
+
   for(let i=0;i<set.length;i++){
     const item = set[i];
     const card = document.createElement('div');
     card.className = 'card';
-    // number small + question text larger
-    const label = document.createElement('div');
-    label.innerHTML = `<span class="qnum">${item.id}.</span><span class="qtext">${item.q}</span>`;
-    card.appendChild(label);
-    // choices as radio input groups
-    const choices = document.createElement('div');
-    choices.className = 'choices';
-    item.options.forEach((opt, idx)=>{
-      const ch = document.createElement('label');
-      ch.className = 'choice';
-      ch.innerHTML = `<input type="radio" name="q${item.id}" value="${opt}"> ${opt}`;
-      choices.appendChild(ch);
-    });
-    card.appendChild(choices);
-
-    // append to columns: alternate to keep balanced visual height
-    if(i % 2 === 0) left.appendChild(card); else right.appendChild(card);
+    // create inner markup
+    card.innerHTML = `
+      <div>
+        <span class="qnum">${item.id}.</span>
+        <span class="qtext">${item.qtext}</span>
+      </div>
+      <div style="margin-top:8px;">
+        <input type="number" inputmode="numeric" class="ansBox" id="ans-${item.id}" aria-label="Answer for question ${item.id}">
+      </div>
+    `;
+    // alternate columns
+    if(i % 2 === 0) fragLeft.appendChild(card); else fragRight.appendChild(card);
   }
+
+  left.appendChild(fragLeft);
+  right.appendChild(fragRight);
 }
 
-// show results + highlight correct/wrong + show solution list
+// Check answers and show results
 function checkAnswers(){
   let score = 0;
   const solDiv = document.getElementById('solutions');
   solDiv.innerHTML = '';
-  for(let i=0;i<currentSet.length;i++){
-    const it = currentSet[i];
-    const radios = document.getElementsByName(`q${it.id}`);
-    let selected = null;
-    for(const r of radios){ if(r.checked){ selected = r.value; break; } }
-    const solItem = document.createElement('div');
-    solItem.className = 'sol';
-    // mark correct/incorrect
-    if(selected !== null && Number(selected) === Number(it.correct)){
+  // Iterate and compare
+  for(const item of currentSet){
+    const inp = document.getElementById(`ans-${item.id}`);
+    const raw = inp ? inp.value.trim() : '';
+    // Use strict numeric comparison: treat empty as no answer
+    let parsed = raw === '' ? null : Number(raw);
+    const sol = document.createElement('div');
+    sol.className = 'sol';
+    if(parsed !== null && !Number.isNaN(parsed) && Number(parsed) === Number(item.correct)){
       score++;
-      solItem.classList.add('correct');
-      solItem.innerHTML = `<strong>Q${it.id}</strong> — Your answer: <strong>${selected}</strong> — ✅ Correct`;
+      sol.classList.add('correct');
+      sol.innerHTML = `<strong>Q${item.id}</strong> — Your answer: <strong>${parsed}</strong> — ✅ Correct`;
     } else {
-      solItem.classList.add('incorrect');
-      solItem.innerHTML = `<strong>Q${it.id}</strong> — Your answer: <em>${selected===null? 'No answer' : selected}</em> — ❌ Correct: <strong>${it.correct}</strong>`;
+      sol.classList.add('incorrect');
+      sol.innerHTML = `<strong>Q${item.id}</strong> — Your answer: <em>${raw || 'No answer'}</em> — ❌ Correct: <strong>${item.correct}</strong>`;
     }
-    solDiv.appendChild(solItem);
+    solDiv.appendChild(sol);
   }
   document.getElementById('scoreBox').textContent = `Score: ${score} / ${TOTAL}`;
-  const summary = document.getElementById('summaryText');
-  summary.innerHTML = `<strong>Result:</strong> You scored <strong>${score}</strong> out of <strong>${TOTAL}</strong>.`;
+  document.getElementById('summaryText').innerHTML = `<strong>Result:</strong> You scored <strong>${score}</strong> out of <strong>${TOTAL}</strong>.`;
   document.getElementById('resultsPanel').style.display = 'block';
-  // scroll to results
-  document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth'});
+  document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth' });
 }
 
-// regenerate set
+// Show solutions only
+function showSolutionsOnly(){
+  const solDiv = document.getElementById('solutions');
+  solDiv.innerHTML = '';
+  for(const item of currentSet){
+    const sol = document.createElement('div');
+    sol.className = 'sol correct';
+    sol.innerHTML = `<strong>Q${item.id}:</strong> ${item.qtext} <strong>${item.correct}</strong>`;
+    solDiv.appendChild(sol);
+  }
+  document.getElementById('summaryText').innerHTML = `<strong>All solutions</strong>`;
+  document.getElementById('resultsPanel').style.display = 'block';
+  document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Regenerate set
 function regenerate(){
+  // Slight UX: confirm if there are answers typed
+  const anyFilled = Array.from(document.querySelectorAll('.ansBox')).some(i => i.value.trim() !== '');
+  if(anyFilled){
+    if(!confirm('Generate a new random set? Current answers will be lost.')) return;
+  }
   currentSet = buildSet();
   render(currentSet);
   document.getElementById('resultsPanel').style.display = 'none';
   document.getElementById('scoreBox').textContent = `Not yet attempted`;
+  // scroll to top
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-// show only solutions (without scoring) — useful after check as well
-function showSolutionsOnly(){
-  // same as building solution list but no scoring highlight
-  const solDiv = document.getElementById('solutions');
-  solDiv.innerHTML = '';
-  for(let i=0;i<currentSet.length;i++){
-    const it = currentSet[i];
-    const solItem = document.createElement('div');
-    solItem.className = 'sol';
-    solItem.innerHTML = `<strong>Q${it.id}:</strong> ${it.q} <strong>Answer:</strong> ${it.correct}`;
-    solDiv.appendChild(solItem);
-  }
-  document.getElementById('resultsPanel').style.display = 'block';
-  document.getElementById('summaryText').innerHTML = `<strong>All solutions</strong>`;
-  document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth'});
-}
+// Print page
+function printPage(){ window.print(); }
 
-// print-friendly / PDF via browser print
-function printPage(){
-  window.print();
-}
-
-// wire buttons
+// Wire up buttons
 document.getElementById('btnCheck').addEventListener('click', checkAnswers);
-document.getElementById('btnReset').addEventListener('click', ()=>{
-  if(confirm('Generate a new random set? Current answers will be lost.')) regenerate();
-});
+document.getElementById('btnReset').addEventListener('click', regenerate);
 document.getElementById('btnShowSol').addEventListener('click', showSolutionsOnly);
 document.getElementById('btnDownload').addEventListener('click', printPage);
 
-// init
+// initialize on load
 regenerate();
 
 </script>
 </body>
 </html>
-
-
