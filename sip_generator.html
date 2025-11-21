@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SIP Round-2 Practice Questions</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { text-align: center; }
+    .container { column-count: 2; column-gap: 60px; }
+    .question { margin: 6px 0; font-size: 18px; }
+    button {
+        background: #0073e6;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 20px 0;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+
+<h1>SIP Round-2 Practice Questions (Class 2)</h1>
+<button onclick="showAnswers()">Show Answers</button>
+
+<div class="container" id="questions"></div>
+
+<script>
+const NUM_QUESTIONS = 300;
+
+// Operators + rules same as your Python script
+const OPERATORS = [
+    ["+", (a,b)=>a+b],
+    ["-", (a,b)=>a>=b ? a-b : null],
+    ["×", (a,b)=>a*b],
+    ["÷", (a,b)=>(b!==0 && a%b===0)? a/b : null]
+];
+
+let questions = [];
+
+function generateQuestion() {
+    while (true) {
+        let a = Math.floor(Math.random() * 50) + 1;
+        let b = Math.floor(Math.random() * 50) + 1;
+        let [op, rule] = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
+        let result = rule(a, b);
+        if (result !== null && result >= 0) {
+            return [`${a} ${op} ${b} = `, result];
+        }
+    }
+}
+
+function loadQuestions(showAnswers=false) {
+    const container = document.getElementById("questions");
+    container.innerHTML = "";
+
+    questions = Array.from({ length: NUM_QUESTIONS }, generateQuestion);
+
+    questions.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.className = "question";
+        div.textContent = `(${i+1}) ${showAnswers ? q[1] : q[0]}`;
+        container.appendChild(div);
+    });
+}
+
+function showAnswers() {
+    // Open a new window showing answers
+    let newWin = window.open("");
+    newWin.document.write("<h1>SIP Round-2 Answer Key</h1>");
+    newWin.document.write("<div style='column-count:2;font-family:Arial;'>");
+    questions.forEach((q, i) => {
+        newWin.document.write(`<div>(${i+1}) ${q[1]}</div>`);
+    });
+    newWin.document.write("</div>");
+}
+
+loadQuestions();
+</script>
+
+</body>
+</html>
