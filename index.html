@@ -54,13 +54,18 @@
     box-shadow:0 1px 4px rgba(20,30,60,0.06);
     break-inside:avoid;
   }
-  .qnum{font-weight:700;color:var(--muted); font-size:13px; display:inline-block; width:30px;}
-  .qtext{font-size:16px; display:inline-block; vertical-align:middle; margin-left:6px;}
+  .qnum{
+    display:none; /* hide question numbers */
+  }
+  .qtext{
+    font-size:16px; 
+    display:inline-block; 
+    vertical-align:middle; 
+    margin-left:0; /* remove space for hidden numbers */
+  }
   .ansBox{
     width:110px; padding:6px; font-size:15px; border-radius:6px; border:1px solid #ccc;
   }
-  .correctMark{color:green;font-weight:700;margin-left:8px;}
-  .wrongMark{color:#b30000;font-weight:700;margin-left:8px;}
   #resultsPanel{margin-top:16px; padding:12px; background:white; border-left:5px solid var(--accent); border-radius:8px; display:none; max-height:50vh; overflow:auto;}
   .solutions{margin-top:12px;}
   .sol{padding:8px;border-radius:6px;margin-bottom:6px;}
@@ -70,6 +75,9 @@
   @media(max-width:900px){
     .grid{grid-template-columns:1fr;}
     header img{height:46px;width:46px;}
+  }
+  @media print {
+    button, header img, footer {display:none !important;}
   }
 </style>
 </head>
@@ -110,12 +118,6 @@
 </footer>
 
 <script>
-/* Working 300-question input-answer generator
-   - TOTAL questions
-   - Range 1..100 (R3)
-   - Operators: + - × ÷ (division returns integer quotient)
-*/
-
 const TOTAL = 300;
 const RANGE_MIN = 1;
 const RANGE_MAX = 100;
@@ -132,13 +134,13 @@ function genArithmetic(){
     answer = a + b;
   } else if(op === "-"){
     a = randInt(RANGE_MIN, RANGE_MAX);
-    b = randInt(RANGE_MIN, a); // ensure non-negative
+    b = randInt(RANGE_MIN, a);
     answer = a - b;
   } else if(op === "×"){
     b = randInt(2,12);
     a = randInt(2, Math.max(2, Math.floor(RANGE_MAX / b)));
     answer = a * b;
-  } else { // division — make dividend multiple of divisor
+  } else { // division
     b = randInt(2,12);
     const maxMult = Math.max(1, Math.floor(RANGE_MAX / b));
     const m = randInt(1, maxMult);
@@ -150,7 +152,6 @@ function genArithmetic(){
 
 let currentSet = [];
 
-// Build question set
 function buildSet(){
   const arr = [];
   for(let i=0;i<TOTAL;i++){
@@ -160,7 +161,6 @@ function buildSet(){
   return arr;
 }
 
-// Efficient render using DocumentFragment for 300 items
 function render(set){
   const left = document.getElementById('colLeft');
   const right = document.getElementById('colRight');
@@ -174,7 +174,6 @@ function render(set){
     const item = set[i];
     const card = document.createElement('div');
     card.className = 'card';
-    // create inner markup
     card.innerHTML = `
       <div>
         <span class="qnum">${item.id}.</span>
@@ -184,7 +183,6 @@ function render(set){
         <input type="number" inputmode="numeric" class="ansBox" id="ans-${item.id}" aria-label="Answer for question ${item.id}">
       </div>
     `;
-    // alternate columns
     if(i % 2 === 0) fragLeft.appendChild(card); else fragRight.appendChild(card);
   }
 
@@ -192,16 +190,13 @@ function render(set){
   right.appendChild(fragRight);
 }
 
-// Check answers and show results
 function checkAnswers(){
   let score = 0;
   const solDiv = document.getElementById('solutions');
   solDiv.innerHTML = '';
-  // Iterate and compare
   for(const item of currentSet){
     const inp = document.getElementById(`ans-${item.id}`);
     const raw = inp ? inp.value.trim() : '';
-    // Use strict numeric comparison: treat empty as no answer
     let parsed = raw === '' ? null : Number(raw);
     const sol = document.createElement('div');
     sol.className = 'sol';
@@ -221,7 +216,6 @@ function checkAnswers(){
   document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Show solutions only
 function showSolutionsOnly(){
   const solDiv = document.getElementById('solutions');
   solDiv.innerHTML = '';
@@ -236,9 +230,7 @@ function showSolutionsOnly(){
   document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Regenerate set
 function regenerate(){
-  // Slight UX: confirm if there are answers typed
   const anyFilled = Array.from(document.querySelectorAll('.ansBox')).some(i => i.value.trim() !== '');
   if(anyFilled){
     if(!confirm('Generate a new random set? Current answers will be lost.')) return;
@@ -247,22 +239,17 @@ function regenerate(){
   render(currentSet);
   document.getElementById('resultsPanel').style.display = 'none';
   document.getElementById('scoreBox').textContent = `Not yet attempted`;
-  // scroll to top
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-// Print page
 function printPage(){ window.print(); }
 
-// Wire up buttons
 document.getElementById('btnCheck').addEventListener('click', checkAnswers);
 document.getElementById('btnReset').addEventListener('click', regenerate);
 document.getElementById('btnShowSol').addEventListener('click', showSolutionsOnly);
 document.getElementById('btnDownload').addEventListener('click', printPage);
 
-// initialize on load
 regenerate();
-
 </script>
 </body>
 </html>
